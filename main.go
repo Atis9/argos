@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -27,7 +27,7 @@ func main() {
 func getClient(token string) *discordgo.Session {
 	client, err := discordgo.New("Bot " + token)
 	if err != nil {
-		fmt.Println("error creating Discord session,", err)
+		log.Fatalf("error creating Discord session, %v", err)
 		return nil
 	}
 
@@ -37,7 +37,7 @@ func getClient(token string) *discordgo.Session {
 func openClient(client *discordgo.Session) {
 	err := client.Open()
 	if err != nil {
-		fmt.Println("error opening connection,", err)
+		log.Fatalf("error opening connection, %v", err)
 		return
 	}
 }
@@ -45,7 +45,7 @@ func openClient(client *discordgo.Session) {
 func runClient(client *discordgo.Session) {
 	client.UpdateGameStatus(0, "Argos")
 
-	fmt.Println("Bot is now running. Press CTRL-C to exit.")
+	log.Println("Bot is now running. Press CTRL-C to exit.")
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-sc
