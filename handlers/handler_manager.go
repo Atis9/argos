@@ -13,6 +13,7 @@ type SessionAndMessageCreate struct {
 
 func AddHandlers(s *discordgo.Session) {
 	s.AddHandler(pingPong)
+	s.AddHandler(dice)
 }
 
 func (smc *SessionAndMessageCreate) isMention() bool {
