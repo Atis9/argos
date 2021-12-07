@@ -43,6 +43,8 @@ func openClient(client *discordgo.Session) {
 }
 
 func runClient(client *discordgo.Session) {
+	client.UpdateGameStatus(0, "Argos")
+
 	fmt.Println("Bot is now running. Press CTRL-C to exit.")
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
