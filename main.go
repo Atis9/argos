@@ -27,7 +27,7 @@ func main() {
 func getClient(token string) *discordgo.Session {
 	client, err := discordgo.New("Bot " + token)
 	if err != nil {
-		log.Fatalf("error creating Discord session, %v", err)
+		log.Fatalf("Cannot create the session: %v", err)
 		return nil
 	}
 
@@ -37,18 +37,19 @@ func getClient(token string) *discordgo.Session {
 func openClient(client *discordgo.Session) {
 	err := client.Open()
 	if err != nil {
-		log.Fatalf("error opening connection, %v", err)
+		log.Fatalf("Cannot open the session: %v", err)
 		return
 	}
 }
 
 func runClient(client *discordgo.Session) {
 	client.UpdateGameStatus(0, "Argos")
+	log.Println("Bot is now running")
 
-	log.Println("Bot is now running. Press CTRL-C to exit.")
-	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
-	<-sc
+	defer client.Close()
 
-	client.Close()
+	stop := make(chan os.Signal, 1)
+	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
+	<-stop
+	log.Println("Gracefully shutdowning")
 }
