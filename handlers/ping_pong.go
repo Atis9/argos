@@ -1,17 +1,23 @@
 package handlers
 
-import "github.com/bwmarrin/discordgo"
+import (
+	"strings"
+
+	"github.com/bwmarrin/discordgo"
+)
 
 func pingPong(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
 
-	if m.Content == "ping" {
-		s.ChannelMessageSend(m.ChannelID, "Pong!")
+	if isTrigger(s, m) {
+		// s.ChannelMessageSend(m.ChannelID, "<@"+m.Author.ID+"> pong")
+		s.ChannelMessageSendReply(m.ChannelID, "pong", m.Reference())
 	}
+}
 
-	if m.Content == "pong" {
-		s.ChannelMessageSend(m.ChannelID, "Ping!")
-	}
+func isTrigger(s *discordgo.Session, m *discordgo.MessageCreate) bool {
+	content := m.ContentWithMentionsReplaced()
+	return strings.HasPrefix(content, "@"+s.State.User.Username) && strings.Contains(content, "ping")
 }
