@@ -35,10 +35,8 @@ func rollDice(dice string) int {
 	if err != nil {
 		return 0
 	}
-	total := 0
 	rand.Seed(time.Now().UnixNano())
-	for i := 0; i < n; i++ {
-		total += rand.Intn(size) + 1
-	}
-	return total
+	max := n*size + 1 - n
+	result := rand.Intn(max) + n
+	return result
 }
