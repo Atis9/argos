@@ -11,33 +11,24 @@ import (
 )
 
 func main() {
-	token := os.Getenv("DISCORD_TOKEN")
-	client := getClient(token)
-
-	handlers.AddHandlers(client)
-	openClient(client)
-	runClient(client)
-}
-
-func getClient(token string) *discordgo.Session {
-	client, err := discordgo.New("Bot " + token)
+	var err error
+	client, err := discordgo.New("Bot " + os.Getenv("DISCORD_TOKEN"))
 	if err != nil {
-		log.Fatalf("Cannot create the session: %v", err)
-		return nil
+		log.Fatalf("Invalid bot parameters: %v", err)
 	}
 
-	return client
-}
+	client.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
+		log.Printf("Logged in as: %v#%v", s.State.User.Username, s.State.User.Discriminator)
+	})
 
-func openClient(client *discordgo.Session) {
-	err := client.Open()
+	handlers.AddHandlers(client)
+
+	err = client.Open()
 	if err != nil {
 		log.Fatalf("Cannot open the session: %v", err)
 		return
 	}
-}
 
-func runClient(client *discordgo.Session) {
 	client.UpdateGameStatus(0, "Argos")
 	log.Println("Bot is now running")
 
