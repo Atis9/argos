@@ -56,5 +56,19 @@ func main() {
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-stop
+
+	log.Println("Removing commands")
+	registeredCommands, err := client.ApplicationCommands(client.State.User.ID, "")
+	if err != nil {
+		log.Fatalf("Could not fetch registered commands: %v", err)
+	}
+
+	for _, v := range registeredCommands {
+		err := client.ApplicationCommandDelete(client.State.User.ID, "", v.ID)
+		if err != nil {
+			log.Panicf("Cannot delete '%v' command: %v", v.Name, err)
+		}
+	}
+
 	log.Println("Gracefully shutdowning")
 }
