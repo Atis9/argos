@@ -8,12 +8,7 @@ import (
 
 	"atis.dev/argos/handlers"
 	"github.com/bwmarrin/discordgo"
-	"github.com/joho/godotenv"
 )
-
-func init() {
-	godotenv.Load(".env")
-}
 
 func main() {
 	token := os.Getenv("DISCORD_TOKEN")
