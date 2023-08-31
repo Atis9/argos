@@ -6,7 +6,6 @@ import (
 	"os/signal"
 	"syscall"
 
-	"atis.dev/argos/handlers"
 	"github.com/bwmarrin/discordgo"
 )
 
@@ -21,7 +20,27 @@ func main() {
 		log.Printf("Logged in as: %v#%v", s.State.User.Username, s.State.User.Discriminator)
 	})
 
-	handlers.AddHandlers(client)
+	client.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
+		client.ApplicationCommandCreate(
+			client.State.User.ID,
+			"",
+			&discordgo.ApplicationCommand{
+				Name:        "ping",
+				Description: "Ping-Pong",
+			},
+		)
+	})
+
+	client.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
+		if i.ApplicationCommandData().Name == "ping" {
+			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: "pong",
+				},
+			})
+		}
+	})
 
 	err = client.Open()
 	if err != nil {
