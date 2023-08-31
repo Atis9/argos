@@ -2,8 +2,12 @@ package main
 
 import (
 	"log"
+	"math/rand"
 	"os"
 	"os/signal"
+	"regexp"
+	"strconv"
+	"strings"
 	"syscall"
 
 	"github.com/bwmarrin/discordgo"
@@ -29,6 +33,22 @@ func main() {
 				Description: "Ping-Pong",
 			},
 		)
+		client.ApplicationCommandCreate(
+			client.State.User.ID,
+			"",
+			&discordgo.ApplicationCommand{
+				Name:        "roll",
+				Description: "Roll NdM",
+				Options: []*discordgo.ApplicationCommandOption{
+					{
+						Type:        discordgo.ApplicationCommandOptionString,
+						Name:        "dice",
+						Description: "e.g.) 1d6",
+						Required:    true,
+					},
+				},
+			},
+		)
 	})
 
 	client.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
@@ -37,6 +57,37 @@ func main() {
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
 					Content: "pong",
+				},
+			})
+		} else if i.ApplicationCommandData().Name == "roll" {
+			options := i.ApplicationCommandData().Options
+			optionMap := make(map[string]*discordgo.ApplicationCommandInteractionDataOption, len(options))
+			for _, opt := range options {
+				optionMap[opt.Name] = opt
+			}
+			var rollDiceResult string
+			if option, ok := optionMap["dice"]; ok {
+				str := option.StringValue()
+				r, _ := regexp.Compile(`\d+d\d+`)
+				if r.MatchString(str) {
+					array := strings.Split(str, "d")
+					n, err := strconv.Atoi(array[0])
+					size, err := strconv.Atoi(array[1])
+					if err != nil {
+						rollDiceResult = "0"
+					} else {
+						max := n*size + 1 - n
+						result := rand.Intn(max) + n
+						rollDiceResult = strconv.Itoa(result)
+					}
+				} else {
+					rollDiceResult = "0"
+				}
+			}
+			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: rollDiceResult,
 				},
 			})
 		}
