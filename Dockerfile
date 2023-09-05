@@ -4,7 +4,6 @@ COPY go.mod ./
 COPY go.sum ./
 RUN go mod download
 COPY *.go ./
-COPY handlers/*.go ./handlers/
 RUN go build -o /argos
 
 FROM gcr.io/distroless/base-debian10
