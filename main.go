@@ -14,7 +14,6 @@ import (
 )
 
 func main() {
-	var err error
 	client, err := discordgo.New("Bot " + os.Getenv("DISCORD_TOKEN"))
 	if err != nil {
 		log.Fatalf("Invalid bot parameters: %v", err)
