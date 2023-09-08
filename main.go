@@ -24,16 +24,16 @@ func main() {
 	})
 
 	client.AddHandler(func(s *discordgo.Session, r *discordgo.Ready) {
-		client.ApplicationCommandCreate(
-			client.State.User.ID,
+		s.ApplicationCommandCreate(
+			s.State.User.ID,
 			"",
 			&discordgo.ApplicationCommand{
 				Name:        "ping",
 				Description: "Ping-Pong",
 			},
 		)
-		client.ApplicationCommandCreate(
-			client.State.User.ID,
+		s.ApplicationCommandCreate(
+			s.State.User.ID,
 			"",
 			&discordgo.ApplicationCommand{
 				Name:        "roll",
