@@ -1,6 +1,8 @@
 module atis.dev/argos
 
-go 1.17
+go 1.22
+
+toolchain go1.22.4
 
 require github.com/bwmarrin/discordgo v0.27.0
 
