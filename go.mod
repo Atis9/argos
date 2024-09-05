@@ -4,7 +4,7 @@ go 1.22
 
 toolchain go1.22.4
 
-require github.com/bwmarrin/discordgo v0.27.0
+require github.com/bwmarrin/discordgo v0.28.1
 
 require (
 	github.com/gorilla/websocket v1.5.0 // indirect
